@@ -1,0 +1,38 @@
+{
+  "name": "@erc8092/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for ERC-8092 Associated Accounts",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "cross-fetch": "^4.1.0",
+    "viem": "2.21.54"
+  },
+  "devDependencies": {
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.1.0"
+  },
+  "keywords": [
+    "erc8092",
+    "associated-accounts",
+    "ethereum",
+    "identity",
+    "viem"
+  ],
+  "license": "MIT"
+}

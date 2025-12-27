@@ -1,0 +1,36 @@
+type Association @entity(immutable: false) {
+  id: ID!
+  initiator: Bytes!
+  approver: Bytes!
+  initiatorHash: Bytes!
+  approverHash: Bytes!
+  initiatorAccount: Account!
+  approverAccount: Account!
+  validAt: BigInt!
+  validUntil: BigInt!
+  interfaceId: Bytes!
+  data: Bytes!
+  revokedAt: BigInt!
+  revokedBy: Bytes
+  createdAt: BigInt!
+  createdTx: Bytes!
+  initiatorKeyType: Bytes!
+  approverKeyType: Bytes!
+}
+
+type Account @entity(immutable: false) {
+  id: ID!
+  address: Bytes!
+  initiatedAssociations: [Association!]! @derivedFrom(field: "initiatorAccount")
+  approvedAssociations: [Association!]! @derivedFrom(field: "approverAccount")
+  totalAssociations: BigInt!
+  activeAssociations: BigInt!
+}
+
+type GlobalStats @entity(immutable: false) {
+  id: ID!
+  totalAssociations: BigInt!
+  totalRevocations: BigInt!
+  totalAccounts: BigInt!
+  lastUpdated: BigInt!
+}

@@ -1,0 +1,28 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: AssociatedAccounts
+    network: base-sepolia
+    source:
+      address: "0x6f4D643BD9332d9Aa3a828576e3a64ccc58D2684"
+      abi: AssociatedAccounts
+      startBlock: 34432814
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Association
+        - Account
+        - GlobalStats
+      abis:
+        - name: AssociatedAccounts
+          file: ./abis/AssociatedAccounts.json
+      eventHandlers:
+        - event: AssociationCreated(indexed bytes32,indexed bytes32,indexed bytes32,(uint40,bytes2,bytes2,bytes,bytes,(bytes,bytes,uint40,uint40,bytes4,bytes)))
+          handler: handleAssociationCreated
+        - event: AssociationRevoked(indexed bytes32,indexed bytes32,uint256)
+          handler: handleAssociationRevoked
+      file: ./src/mapping.ts
