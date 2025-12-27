@@ -1,0 +1,18 @@
+{
+  "name": "erc8092-tooling",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Tooling layer for ERC-8092 Associated Accounts",
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev": "pnpm -r --parallel dev",
+    "test": "pnpm -r test",
+    "clean": "pnpm -r clean && rm -rf node_modules"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.1"
+}

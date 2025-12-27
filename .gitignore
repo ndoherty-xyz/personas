@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Environment
+.env
+.env.local
+.env*.local
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+
+# Logs
+*.log
+
+# Subgraph
+subgraph/generated/
+subgraph/build/
+
+# Contracts
+contracts/artifacts/
+contracts/cache/
