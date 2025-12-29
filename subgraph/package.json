@@ -1,5 +1,5 @@
 {
-  "name": "@erc8092-tooling/subgraph",
+  "name": "@personas/subgraph",
   "version": "0.0.1",
   "private": true,
   "scripts": {

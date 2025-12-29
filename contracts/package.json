@@ -1,0 +1,11 @@
+{
+  "name": "@personas/contracts",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "test:watch": "forge test --watch",
+    "deploy:sepolia": "forge script script/Deploy.s.sol --rpc-url base-sepolia --broadcast --verify"
+  }
+}

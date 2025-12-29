@@ -30,6 +30,9 @@ coverage/
 subgraph/generated/
 subgraph/build/
 
-# Contracts
-contracts/artifacts/
+# Contracts (Foundry)
+contracts/out/
 contracts/cache/
+
+# Ignore local anvil deployments (chainid 31337)
+contracts/broadcast/*/31337/

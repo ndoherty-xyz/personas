@@ -1,5 +1,5 @@
 {
-  "name": "@erc8092/sdk",
+  "name": "@personas/sdk",
   "version": "0.1.0",
   "description": "TypeScript SDK for ERC-8092 Associated Accounts",
   "type": "module",
