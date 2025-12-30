@@ -27,7 +27,7 @@ describe("AssociationsClient - Subgraph Queries", () => {
 
   it("should get association by hash and return parsed addresses", async () => {
     const hash =
-      "0x3fdfddf0527d51209e37622152e318be8fa4e7356a55a373bf267b6e7084ef09";
+      "0x86a611fbc003a0ec4a660e23c8837c0ffed1f49097094142512696e1a22c1ad9";
     const association = await client.getAssociation(hash);
 
     expect(association).toBeDefined();

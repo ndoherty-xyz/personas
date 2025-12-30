@@ -2,12 +2,13 @@ export { AssociationsClient } from "./client/AssociationsClient";
 export type { AssociationsClientConfig } from "./client/AssociationsClient";
 
 export type {
-  Address,
   AssociatedAccountRecord,
-  SignatureData,
   SignedAssociationRecord,
+  PendingProposal,
   KeyTypeValue,
+  ProposalStatus,
   AssociationQueryOptions,
+  ProposalQueryOptions,
   NetworkConfig,
   EthereumAddress,
   Hex,
@@ -18,11 +19,13 @@ export { KeyType } from "./types";
 export {
   CONTRACT_ADDRESSES,
   CHAIN_CONFIG,
-  ASSOCIATED_ACCOUNTS_ABI,
+  PERSONAS_ABI,
+  SUBGRAPH_URLS,
 } from "./constants";
 
 export {
-  hashAddress,
+  formatERC7930Address,
+  hashERC7930Address,
   hashAAR,
   getEIP712Domain,
   getEIP712TypedData,

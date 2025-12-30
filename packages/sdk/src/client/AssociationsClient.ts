@@ -12,27 +12,30 @@ import { baseSepolia } from "viem/chains";
 
 import {
   buildAssociationsQuery,
+  buildProposalsQuery,
   buildAssociationByIdQuery,
+  buildProposalByIdQuery,
   buildAccountQuery,
   buildGlobalStatsQuery,
   type QueryOptions,
+  type ProposalQueryOptions,
   type AssociationQueryResult,
+  type ProposalQueryResult,
   type AccountQueryResult,
   type GlobalStatsResult,
 } from "../queries";
-import { SUBGRAPH_URLS } from "../constants";
+import { SUBGRAPH_URLS, PERSONAS_ABI, CONTRACT_ADDRESSES } from "../constants";
 
 import type {
   AssociatedAccountRecord,
   SignedAssociationRecord,
-  SignatureData,
-  Address,
+  PendingProposal,
   EthereumAddress,
-  AssociationQueryOptions,
 } from "../types";
-import { CONTRACT_ADDRESSES, ASSOCIATED_ACCOUNTS_ABI } from "../constants";
+
 import {
-  hashAddress,
+  formatERC7930Address,
+  hashERC7930Address,
   hashAAR,
   getEIP712TypedData,
   isAssociationValid,
@@ -80,47 +83,41 @@ export class AssociationsClient {
     this.walletClient = config.walletClient;
   }
 
+  // ===== ASSOCIATION CREATION (AAR) =====
+
+  /**
+   * Create an unsigned AssociatedAccountRecord
+   * Formats ethereum addresses as ERC-7930 interoperable addresses
+   */
   async createAssociation(params: {
     initiator: EthereumAddress;
     approver: EthereumAddress;
-    validAt?: bigint;
-    validUntil?: bigint;
+    validAt?: number;
+    validUntil?: number;
     interfaceId?: Hex;
     data?: Hex;
   }): Promise<AssociatedAccountRecord> {
-    const initiatorKeyType = await detectKeyType(
-      params.initiator,
-      this.publicClient
-    );
-    const approverKeyType = await detectKeyType(
-      params.approver,
-      this.publicClient
-    );
-
-    const initiatorAddr: Address = {
-      addressHash: hashAddress(params.initiator),
-      keyType: initiatorKeyType,
-    };
-
-    const approverAddr: Address = {
-      addressHash: hashAddress(params.approver),
-      keyType: approverKeyType,
-    };
+    const initiatorAddr = formatERC7930Address(this.chainId, params.initiator);
+    const approverAddr = formatERC7930Address(this.chainId, params.approver);
 
     return {
       initiator: initiatorAddr,
       approver: approverAddr,
-      validAt: params.validAt ?? BigInt(Math.floor(Date.now() / 1000)),
-      validUntil: params.validUntil ?? 0n,
+      validAt: params.validAt ?? Math.floor(Date.now() / 1000),
+      validUntil: params.validUntil ?? 0,
       interfaceId: params.interfaceId ?? "0x00000000",
       data: params.data ?? "0x",
     };
   }
 
+  /**
+   * Sign an AssociatedAccountRecord using EIP-712
+   * Returns signature and detected key type
+   */
   async signAssociation(
     aar: AssociatedAccountRecord,
     walletClient?: WalletClient
-  ): Promise<SignatureData> {
+  ): Promise<{ signature: Hex; keyType: Hex }> {
     const client = walletClient ?? this.walletClient;
 
     if (!client) {
@@ -136,34 +133,47 @@ export class AssociationsClient {
       this.chainId,
       this.contractAddress
     );
+
     const signature = await client.signTypedData({
       ...typedData,
       account: client.account,
     });
+
     const keyType = await detectKeyType(
       client.account.address,
       this.publicClient
     );
 
-    return {
-      keyType,
-      signature,
-    };
+    return { signature, keyType };
   }
 
+  /**
+   * Build a complete SignedAssociationRecord from AAR and both signatures
+   * For direct registration flow (skip proposal)
+   */
   buildSignedRecord(
     aar: AssociatedAccountRecord,
-    initiatorSignature: SignatureData,
-    approverSignature: SignatureData
+    initiatorSignature: Hex,
+    initiatorKeyType: Hex,
+    approverSignature: Hex,
+    approverKeyType: Hex
   ): SignedAssociationRecord {
     return {
-      aar,
+      revokedAt: 0,
+      initiatorKeyType,
+      approverKeyType,
       initiatorSignature,
       approverSignature,
-      revokedAt: 0n,
+      record: aar,
     };
   }
 
+  // ===== DIRECT REGISTRATION FLOW =====
+
+  /**
+   * Register a complete association directly (both parties signed offchain)
+   * Returns transaction hash
+   */
   async registerAssociation(
     sar: SignedAssociationRecord,
     walletClient?: WalletClient
@@ -180,7 +190,7 @@ export class AssociationsClient {
 
     const hash = await client.writeContract({
       address: this.contractAddress,
-      abi: ASSOCIATED_ACCOUNTS_ABI,
+      abi: PERSONAS_ABI,
       functionName: "registerAssociation",
       args: [sar],
       account: client.account,
@@ -190,9 +200,16 @@ export class AssociationsClient {
     return hash;
   }
 
-  async revokeAssociation(
-    hash: Hex,
-    revokedAt?: bigint,
+  // ===== PROPOSAL FLOW =====
+
+  /**
+   * Propose an association (initiator creates and signs)
+   * Returns transaction hash
+   */
+  async proposeAssociation(
+    aar: AssociatedAccountRecord,
+    signature: Hex,
+    keyType: Hex,
     walletClient?: WalletClient
   ): Promise<Hex> {
     const client = walletClient ?? this.walletClient;
@@ -205,11 +222,107 @@ export class AssociationsClient {
       throw new Error("Wallet client has no account");
     }
 
-    const timestamp = revokedAt ?? BigInt(Math.floor(Date.now() / 1000));
+    const txHash = await client.writeContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "proposeAssociation",
+      args: [aar, signature, keyType],
+      account: client.account,
+      chain: this.chain,
+    });
+
+    return txHash;
+  }
+
+  /**
+   * Accept a pending proposal (approver signs and completes)
+   * Returns transaction hash
+   */
+  async acceptProposal(
+    proposalHash: Hex,
+    signature: Hex,
+    keyType: Hex,
+    walletClient?: WalletClient
+  ): Promise<Hex> {
+    const client = walletClient ?? this.walletClient;
+
+    if (!client) {
+      throw new Error("No wallet client provided");
+    }
+
+    if (!client.account) {
+      throw new Error("Wallet client has no account");
+    }
 
     const txHash = await client.writeContract({
       address: this.contractAddress,
-      abi: ASSOCIATED_ACCOUNTS_ABI,
+      abi: PERSONAS_ABI,
+      functionName: "acceptProposal",
+      args: [proposalHash, signature, keyType],
+      account: client.account,
+      chain: this.chain,
+    });
+
+    return txHash;
+  }
+
+  /**
+   * Reject a pending proposal
+   * Returns transaction hash
+   */
+  async rejectProposal(
+    proposalHash: Hex,
+    walletClient?: WalletClient
+  ): Promise<Hex> {
+    const client = walletClient ?? this.walletClient;
+
+    if (!client) {
+      throw new Error("No wallet client provided");
+    }
+
+    if (!client.account) {
+      throw new Error("Wallet client has no account");
+    }
+
+    const txHash = await client.writeContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "rejectProposal",
+      args: [proposalHash],
+      account: client.account,
+      chain: this.chain,
+    });
+
+    return txHash;
+  }
+
+  // ===== REVOCATION =====
+
+  /**
+   * Revoke an association
+   * Either party can revoke, optionally backdating the revocation
+   */
+  async revokeAssociation(
+    hash: Hex,
+    revokedAt?: number,
+    walletClient?: WalletClient
+  ): Promise<Hex> {
+    const client = walletClient ?? this.walletClient;
+
+    if (!client) {
+      throw new Error("No wallet client provided");
+    }
+
+    if (!client.account) {
+      throw new Error("Wallet client has no account");
+    }
+
+    // Default to current timestamp if not specified
+    const timestamp = revokedAt ?? Math.floor(Date.now() / 1000);
+
+    const txHash = await client.writeContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
       functionName: "revokeAssociation",
       args: [hash, timestamp],
       account: client.account,
@@ -219,8 +332,157 @@ export class AssociationsClient {
     return txHash;
   }
 
+  // ===== CONTRACT READ FUNCTIONS =====
+
   /**
-   * Get a single association by its hash
+   * Get a proposal from the contract by hash
+   * Returns null if proposal doesn't exist
+   */
+  async getProposalFromContract(hash: Hex): Promise<PendingProposal | null> {
+    const proposal = (await this.publicClient.readContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "getProposal",
+      args: [hash],
+    })) as PendingProposal;
+
+    return proposal.exists ? proposal : null;
+  }
+
+  /**
+   * Get pending proposal hashes for an address (from contract)
+   * Returns array of proposal hashes
+   */
+  async getPendingProposalHashes(
+    approverAddress: EthereumAddress
+  ): Promise<Hex[]> {
+    const approverAddr = formatERC7930Address(this.chainId, approverAddress);
+
+    const hashes = (await this.publicClient.readContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "getPendingProposals",
+      args: [approverAddr],
+    })) as Hex[];
+
+    return hashes;
+  }
+
+  /**
+   * Get an association from the contract by hash
+   */
+  async getAssociationFromContract(
+    hash: Hex
+  ): Promise<SignedAssociationRecord> {
+    const sar = (await this.publicClient.readContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "getAssociation",
+      args: [hash],
+    })) as SignedAssociationRecord;
+
+    return sar;
+  }
+
+  /**
+   * Check if an association is valid on-chain
+   */
+  async isValidOnChain(hash: Hex): Promise<boolean> {
+    const result = await this.publicClient.readContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "isValid",
+      args: [hash],
+    });
+
+    return result as boolean;
+  }
+
+  /**
+   * Check if two accounts are associated
+   */
+  async areAccountsAssociated(
+    account1: EthereumAddress,
+    account2: EthereumAddress
+  ): Promise<boolean> {
+    const addr1 = formatERC7930Address(this.chainId, account1);
+    const addr2 = formatERC7930Address(this.chainId, account2);
+
+    const result = await this.publicClient.readContract({
+      address: this.contractAddress,
+      abi: PERSONAS_ABI,
+      functionName: "areAccountsAssociated",
+      args: [addr1, addr2],
+    });
+
+    return result as boolean;
+  }
+
+  // ===== LOCAL VALIDATION =====
+
+  /**
+   * Validate an association locally (checks timestamps and revocation)
+   * Does not verify signatures - use contract's isValid for full validation
+   */
+  isValid(sar: SignedAssociationRecord, timestamp?: number): boolean {
+    return isAssociationValid(sar, timestamp);
+  }
+
+  /**
+   * Compute the hash of an AAR
+   * This is the unique identifier used for storage/lookups
+   */
+  computeHash(aar: AssociatedAccountRecord): Hex {
+    return hashAAR(aar);
+  }
+
+  // ===== SUBGRAPH QUERIES =====
+
+  /**
+   * Query associations for an address from the subgraph
+   * Much faster than contract reads for bulk queries
+   */
+  async getAssociationsForAddress(
+    address: EthereumAddress,
+    options?: QueryOptions
+  ): Promise<AssociationQueryResult[]> {
+    const addr = formatERC7930Address(this.chainId, address);
+    const addressHash = hashERC7930Address(addr);
+    const query = buildAssociationsQuery(addressHash, options);
+
+    const response = await fetch(this.subgraphUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+
+    const result = await response.json();
+    return result.data?.associations || [];
+  }
+
+  /**
+   * Query proposals for an address from the subgraph
+   */
+  async getProposalsForAddress(
+    address: EthereumAddress,
+    options?: ProposalQueryOptions
+  ): Promise<ProposalQueryResult[]> {
+    const addr = formatERC7930Address(this.chainId, address);
+    const addressHash = hashERC7930Address(addr);
+    const query = buildProposalsQuery(addressHash, options);
+
+    const response = await fetch(this.subgraphUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query }),
+    });
+
+    const result = await response.json();
+    return result.data?.proposals || [];
+  }
+
+  /**
+   * Get a single association by hash from subgraph
    */
   async getAssociation(hash: string): Promise<AssociationQueryResult | null> {
     const query = buildAssociationByIdQuery(hash);
@@ -235,34 +497,11 @@ export class AssociationsClient {
     return result.data?.association || null;
   }
 
-  async validateAssociation(sar: SignedAssociationRecord): Promise<boolean> {
-    const result = await this.publicClient.readContract({
-      address: this.contractAddress,
-      abi: ASSOCIATED_ACCOUNTS_ABI,
-      functionName: "validateAssociation",
-      args: [sar],
-    });
-
-    return result as boolean;
-  }
-
-  isValid(sar: SignedAssociationRecord, timestamp?: bigint): boolean {
-    return isAssociationValid(sar, timestamp);
-  }
-
-  computeHash(aar: AssociatedAccountRecord): Hex {
-    return hashAAR(aar);
-  }
-
   /**
-   * Query associations for an address from the subgraph
+   * Get a single proposal by hash from subgraph
    */
-  async getAssociationsForAddress(
-    address: EthereumAddress,
-    options?: QueryOptions
-  ): Promise<AssociationQueryResult[]> {
-    const addressHash = hashAddress(address);
-    const query = buildAssociationsQuery(addressHash, options);
+  async getProposal(hash: string): Promise<ProposalQueryResult | null> {
+    const query = buildProposalByIdQuery(hash);
 
     const response = await fetch(this.subgraphUrl, {
       method: "POST",
@@ -271,7 +510,7 @@ export class AssociationsClient {
     });
 
     const result = await response.json();
-    return result.data?.associations || [];
+    return result.data?.proposal || null;
   }
 
   /**
@@ -280,7 +519,8 @@ export class AssociationsClient {
   async getAccountStats(
     address: EthereumAddress
   ): Promise<AccountQueryResult | null> {
-    const addressHash = hashAddress(address);
+    const addr = formatERC7930Address(this.chainId, address);
+    const addressHash = hashERC7930Address(addr);
     const query = buildAccountQuery(addressHash);
 
     const response = await fetch(this.subgraphUrl, {
