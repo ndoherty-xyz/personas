@@ -1,0 +1,1038 @@
+[
+  {
+    "type": "function",
+    "name": "acceptProposal",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "approverSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "approverKeyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "areAccountsAssociated",
+    "inputs": [
+      {
+        "name": "account1",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "account2",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "associations",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "revokedAt",
+        "type": "uint40",
+        "internalType": "uint40"
+      },
+      {
+        "name": "initiatorKeyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      },
+      {
+        "name": "approverKeyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      },
+      {
+        "name": "initiatorSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "approverSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "record",
+        "type": "tuple",
+        "internalType": "struct DataTypes.AssociatedAccountRecord",
+        "components": [
+          {
+            "name": "initiator",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approver",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "validAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "validUntil",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "interfaceId",
+            "type": "bytes4",
+            "internalType": "bytes4"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getActiveAssociationsForAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct DataTypes.SignedAssociationRecord[]",
+        "components": [
+          {
+            "name": "revokedAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "approverKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approverSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "record",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAssociation",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct DataTypes.SignedAssociationRecord",
+        "components": [
+          {
+            "name": "revokedAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "approverKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approverSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "record",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAssociationHashesForAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAssociationsForAccount",
+    "inputs": [
+      {
+        "name": "account",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct DataTypes.SignedAssociationRecord[]",
+        "components": [
+          {
+            "name": "revokedAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "approverKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approverSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "record",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getPendingProposals",
+    "inputs": [
+      {
+        "name": "approverAddress",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getProposal",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple",
+        "internalType": "struct DataTypes.PendingProposal",
+        "components": [
+          {
+            "name": "aar",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "createdAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "exists",
+            "type": "bool",
+            "internalType": "bool"
+          }
+        ]
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "isValid",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "proposals",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "aar",
+        "type": "tuple",
+        "internalType": "struct DataTypes.AssociatedAccountRecord",
+        "components": [
+          {
+            "name": "initiator",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approver",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "validAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "validUntil",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "interfaceId",
+            "type": "bytes4",
+            "internalType": "bytes4"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "initiatorSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "initiatorKeyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      },
+      {
+        "name": "createdAt",
+        "type": "uint40",
+        "internalType": "uint40"
+      },
+      {
+        "name": "exists",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "proposeAssociation",
+    "inputs": [
+      {
+        "name": "aar",
+        "type": "tuple",
+        "internalType": "struct DataTypes.AssociatedAccountRecord",
+        "components": [
+          {
+            "name": "initiator",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approver",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "validAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "validUntil",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "interfaceId",
+            "type": "bytes4",
+            "internalType": "bytes4"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      },
+      {
+        "name": "initiatorSignature",
+        "type": "bytes",
+        "internalType": "bytes"
+      },
+      {
+        "name": "initiatorKeyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "registerAssociation",
+    "inputs": [
+      {
+        "name": "sar",
+        "type": "tuple",
+        "internalType": "struct DataTypes.SignedAssociationRecord",
+        "components": [
+          {
+            "name": "revokedAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "approverKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approverSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "record",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "outputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "rejectProposal",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "revokeAssociation",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "revokedAt",
+        "type": "uint40",
+        "internalType": "uint40"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "event",
+    "name": "AssociationCreated",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "initiator",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "approver",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "sar",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct DataTypes.SignedAssociationRecord",
+        "components": [
+          {
+            "name": "revokedAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "initiatorKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "approverKeyType",
+            "type": "bytes2",
+            "internalType": "bytes2"
+          },
+          {
+            "name": "initiatorSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approverSignature",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "record",
+            "type": "tuple",
+            "internalType": "struct DataTypes.AssociatedAccountRecord",
+            "components": [
+              {
+                "name": "initiator",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "approver",
+                "type": "bytes",
+                "internalType": "bytes"
+              },
+              {
+                "name": "validAt",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "validUntil",
+                "type": "uint40",
+                "internalType": "uint40"
+              },
+              {
+                "name": "interfaceId",
+                "type": "bytes4",
+                "internalType": "bytes4"
+              },
+              {
+                "name": "data",
+                "type": "bytes",
+                "internalType": "bytes"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "AssociationRevoked",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "revokedBy",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "revokedAt",
+        "type": "uint256",
+        "indexed": false,
+        "internalType": "uint256"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ProposalAccepted",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "approver",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ProposalCreated",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "approver",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "aar",
+        "type": "tuple",
+        "indexed": false,
+        "internalType": "struct DataTypes.AssociatedAccountRecord",
+        "components": [
+          {
+            "name": "initiator",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "approver",
+            "type": "bytes",
+            "internalType": "bytes"
+          },
+          {
+            "name": "validAt",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "validUntil",
+            "type": "uint40",
+            "internalType": "uint40"
+          },
+          {
+            "name": "interfaceId",
+            "type": "bytes4",
+            "internalType": "bytes4"
+          },
+          {
+            "name": "data",
+            "type": "bytes",
+            "internalType": "bytes"
+          }
+        ]
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "ProposalRejected",
+    "inputs": [
+      {
+        "name": "hash",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      },
+      {
+        "name": "approver",
+        "type": "bytes32",
+        "indexed": true,
+        "internalType": "bytes32"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "error",
+    "name": "AlreadyRevoked",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "AssociationNotFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InteroperableAddressParsingError",
+    "inputs": [
+      {
+        "name": "",
+        "type": "bytes",
+        "internalType": "bytes"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidSignature",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "InvalidTimestamps",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotAuthorized",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ProposalAlreadyExists",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "ProposalNotFound",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "UnsupportedChainType",
+    "inputs": [
+      {
+        "name": "chainType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      }
+    ]
+  },
+  {
+    "type": "error",
+    "name": "UnsupportedKeyType",
+    "inputs": [
+      {
+        "name": "keyType",
+        "type": "bytes2",
+        "internalType": "bytes2"
+      }
+    ]
+  }
+]

@@ -5,7 +5,7 @@ import type { EthereumAddress } from "../types";
  * Deployed contract addresses by chain ID
  */
 export const CONTRACT_ADDRESSES: Record<number, EthereumAddress> = {
-  84532: "0x6f4D643BD9332d9Aa3a828576e3a64ccc58D2684",
+  84532: "0x049CC05539e8FAbF142Ddaa99A9259287E1457B0",
 };
 
 /**
@@ -233,7 +233,7 @@ export const ASSOCIATED_ACCOUNTS_ABI = [
 
 export const SUBGRAPH_URLS = {
   "base-sepolia":
-    "https://api.studio.thegraph.com/query/45616/erc-8092-associations/v0.0.7",
+    "https://api.studio.thegraph.com/query/45616/erc-8092-associations/v0.1.0",
   84532:
-    "https://api.studio.thegraph.com/query/45616/erc-8092-associations/v0.0.7",
+    "https://api.studio.thegraph.com/query/45616/erc-8092-associations/v0.1.0",
 } as const;

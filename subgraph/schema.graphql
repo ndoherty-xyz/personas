@@ -1,11 +1,11 @@
+# subgraph/schema.graphql
+
 type Association @entity(immutable: false) {
   id: ID!
   initiator: Bytes!
   approver: Bytes!
   initiatorHash: Bytes!
   approverHash: Bytes!
-  initiatorAccount: Account!
-  approverAccount: Account!
   validAt: BigInt!
   validUntil: BigInt!
   interfaceId: Bytes!
@@ -16,6 +16,30 @@ type Association @entity(immutable: false) {
   createdTx: Bytes!
   initiatorKeyType: Bytes!
   approverKeyType: Bytes!
+  initiatorAccount: Account!
+  approverAccount: Account!
+}
+
+type Proposal @entity(immutable: false) {
+  id: ID!
+  initiator: Bytes!
+  approver: Bytes!
+  initiatorHash: Bytes!
+  approverHash: Bytes!
+  validAt: BigInt!
+  validUntil: BigInt!
+  interfaceId: Bytes!
+  data: Bytes!
+  initiatorKeyType: Bytes!
+  createdAt: BigInt!
+  createdTx: Bytes!
+  status: ProposalStatus!
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
 }
 
 type Account @entity(immutable: false) {
@@ -32,5 +56,6 @@ type GlobalStats @entity(immutable: false) {
   totalAssociations: BigInt!
   totalRevocations: BigInt!
   totalAccounts: BigInt!
+  totalProposals: BigInt!
   lastUpdated: BigInt!
 }
